@@ -1,5 +1,8 @@
 import unittest
 
+from pydantic import ValidationError
+
+from app.schemas.text import TextAnalysisRequest
 from app.services.text_service import (
     analyze_text,
     count_words,
@@ -60,6 +63,15 @@ class AnalyzeTextTests(unittest.TestCase):
             result.total_word_count,
             sum(paragraph.word_count for paragraph in result.paragraphs),
         )
+
+    def test_text_file_size_is_accepted_by_request_schema(self) -> None:
+        request = TextAnalysisRequest(text="a" * 16_893)
+
+        self.assertEqual(len(request.text), 16_893)
+
+    def test_request_schema_still_rejects_unreasonably_large_text(self) -> None:
+        with self.assertRaises(ValidationError):
+            TextAnalysisRequest(text="a" * 100_001)
 
 
 if __name__ == "__main__":

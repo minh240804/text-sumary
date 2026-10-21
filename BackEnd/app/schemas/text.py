@@ -1,10 +1,12 @@
 from pydantic import BaseModel, Field
 
+MAX_TEXT_LENGTH = 100_000
+
 
 class TextAnalysisRequest(BaseModel):
     text: str = Field(
         min_length=1,
-        max_length=10_000,
+        max_length=MAX_TEXT_LENGTH,
         description="Văn bản cần thống kê và kiểm tra.",
     )
 
